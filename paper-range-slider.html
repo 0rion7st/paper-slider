@@ -902,16 +902,13 @@ Custom property | Description | Default
         {
           case 'start':
             var s = this.$.startKnob.style;
-
             this.$.startKnob.classList.remove('dragging');
             this._resetKnob();
             this.endValue = this.endValue + this.startValue - this.immediateStartValue
             this.startValue = this.immediateStartValue;
-
             s.transform = s.webkitTransform = '';
-
-            this.fire('change');
-
+            this.fire('start-value-change');
+            this.fire('end-value-change');
             break;
 
           case 'end':
@@ -920,25 +917,21 @@ Custom property | Description | Default
             this._resetKnob();
             this.endValue = this.immediateEndValue;
             s.transform = s.webkitTransform = '';
-            this.fire('change');
+            this.fire('end-value-change');
             break;
           case 'offset':
             this._resetKnob();
             this.startValue = this.immediateStartValue;
-            this.fire('change');
+            this.fire('start-value-change');
+            this.fire('end-value-change');
             break;
           default:
             var s = this.$.sliderKnob.style;
-
             this.$.sliderKnob.classList.remove('dragging');
-
             this._resetKnob();
             this.value = this.immediateValue;
-
             s.transform = s.webkitTransform = '';
-
             this.fire('change');
-
             break;
         }
         this.activeKnob = 'slider';
