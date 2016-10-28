@@ -79,9 +79,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             --paper-range-slider-secondary-color: var(--paper-red-a200);
           }
         </style>
-        <div>Range Delay: <span>{{range.startValue}}</span> Duration: <span>{{range.endValue}}</span></div><br>
-        <paper-range-slider id="range" pin value="0" end-value="10" start-value="10" ></paper-range-slider>
-        <div>Ratings: <span id="ratingsLabel" class="caption"><span>{{rating.startValue}}</span></span></div><br>
+        <div>Range Delay: <span>{{startValue}}</span> Duration: <span>{{endValue}}</span></div><br>
+        <paper-range-slider id="range" pin value="0" end-value="{{endValue}}" start-value="{{startValue}}" ></paper-range-slider>
+        <div>Ratings: <span id="ratingsLabel" class="caption"></span></div><br>
         <paper-range-slider id="ratings" pin snaps max="10" max-markers="10" step="1" value="5"></paper-range-slider>
         <div>Grade: <span id="gradeLabel" class="caption"></span></div><br>
         <paper-range-slider id="grade" pin value="20" secondary-progress="70"></paper-range-slider>

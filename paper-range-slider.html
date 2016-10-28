@@ -372,6 +372,9 @@ Custom property | Description | Default
                 min="0"
                 max="100"
                 value="100"
+                on-down="_rangedown"
+                on-up="_resetKnob"
+                on-track="_onTrack"
         >
         </paper-progress>
       </div>
@@ -689,6 +692,10 @@ Custom property | Description | Default
           case 'end':
             this._setEend(true);
             break;
+          case 'offset':
+            this._setEstart(true);
+            this._setEend(true);
+            break;
           default:
             this._setExpand(true);
         }
@@ -703,6 +710,10 @@ Custom property | Description | Default
             this._setEstart(false);
             break;
           case 'end':
+            this._setEend(false);
+            break;
+          case 'offset':
+            this._setEstart(false);
             this._setEend(false);
             break;
           default:
@@ -801,6 +812,13 @@ Custom property | Description | Default
             this._maxx = this._w - this._startx;
             this.$.endKnob.classList.add('dragging');
             break;
+          case 'offset':
+            this._x = this.startRatio * this._w;
+            this._startx = this._x;
+            this._knobstartx = this._startx;
+            this._minx = - this._startx;
+            this._maxx = this._w - this._startx;
+            break;
           default:
             this._x = this.ratio * this._w;
             this._startx = this._x;
@@ -841,12 +859,25 @@ Custom property | Description | Default
             if(immediateEndValue-this.startValue<this.minRange)
               return;
             this._setImmediateEndValue(immediateEndValue-this.startValue);
-            console.log(immediateEndValue)
             // update knob's position
             var translateX = ((this._calcRatio(this.immediateEndValue+this.startValue) * this._w) - this._knobstartx);
             this.translate3d(translateX + 'px', 0, 0, this.$.endKnob);
 
             this.$.rangeContainer.style.right =this._w - (this._calcRatio(this.immediateEndValue+this.startValue) * this._w)  + 'px';
+
+            break;
+          case 'offset':
+            var immediateStartValue = this._calcStep(this._calcKnobPosition(this._x / this._w));
+            if((immediateStartValue+this.endValue)>this.max)
+              return;
+            this._setImmediateStartValue(immediateStartValue);
+            // update knob's position
+            var translateX = ((this._calcRatio(this.immediateStartValue) * this._w) - this._knobstartx);
+            this.translate3d(translateX + 'px', 0, 0, this.$.startKnob);
+            this.translate3d(translateX + 'px', 0, 0, this.$.endKnob);
+            this.$.rangeContainer.style.left =(this._calcRatio(this.immediateStartValue) * this._w) + 'px';
+            this.$.rangeContainer.style.right =this._w - (this._calcRatio(this.immediateStartValue+this.endValue) * this._w)  + 'px';
+
 
             break;
           default:
@@ -873,7 +904,6 @@ Custom property | Description | Default
             var s = this.$.startKnob.style;
 
             this.$.startKnob.classList.remove('dragging');
-            this._setDragging(false);
             this._resetKnob();
             this.endValue = this.endValue + this.startValue - this.immediateStartValue
             this.startValue = this.immediateStartValue;
@@ -883,24 +913,25 @@ Custom property | Description | Default
             this.fire('change');
 
             break;
+
           case 'end':
             var s = this.$.endKnob.style;
-
             this.$.endKnob.classList.remove('dragging');
-            this._setDragging(false);
             this._resetKnob();
             this.endValue = this.immediateEndValue;
-
             s.transform = s.webkitTransform = '';
-
             this.fire('change');
-
+            break;
+          case 'offset':
+            this._resetKnob();
+            this.startValue = this.immediateStartValue;
+            this.fire('change');
             break;
           default:
             var s = this.$.sliderKnob.style;
 
             this.$.sliderKnob.classList.remove('dragging');
-            this._setDragging(false);
+
             this._resetKnob();
             this.value = this.immediateValue;
 
@@ -912,7 +943,7 @@ Custom property | Description | Default
         }
         this.activeKnob = 'slider';
 
-
+        this._setDragging(false);
       },
 
       _knobdown: function(event) {
@@ -926,7 +957,17 @@ Custom property | Description | Default
         this.focus();
       },
 
+      _rangedown:function(event)
+      {
+        this.activeKnob = 'offset';
+        this._expandKnob();
 
+        // cancel selection
+        event.preventDefault();
+
+        // set the focus manually because we will called prevent default
+        this.focus();
+      },
       _knobStartDown: function(event) {
         this.activeKnob = 'start';
         this._expandKnob();
