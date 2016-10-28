@@ -364,7 +364,7 @@ Custom property | Description | Default
                 on-track="_onTrack">
         </paper-progress>
       </div>
-      <div hidden$="[[_rangeHidden(startValue, endValue)]]" class="range-container" id="rangeContainer">
+      <div hidden$="[[_rangeHidden(startValue, endValue,immediateStartValue,immediateEndValue)]]" class="range-container" id="rangeContainer">
         <paper-progress
                 disabled$="[[disabled]]"
                 id="rangeBar"
@@ -396,14 +396,14 @@ Custom property | Description | Default
         <div class="slider-knob-inner" value$="[[immediateValue]]"></div>
       </div>
 
-      <div hidden$="[[_rangeHidden(startValue, endValue)]]" id="startKnob"
+      <div hidden$="[[_rangeHidden(startValue, endValue,immediateStartValue,immediateEndValue)]]" id="startKnob"
            class="slider-start-knob"
            on-down="_knobStartDown"
            on-up="_resetKnob"
            on-track="_onTrack">
         <div class="range-knob-inner" value$="[[immediateStartValue]]"></div>
       </div>
-      <div hidden$="[[_rangeHidden(startValue, endValue)]]" id="endKnob"
+      <div hidden$="[[_rangeHidden(startValue, endValue,immediateStartValue,immediateEndValue)]]" id="endKnob"
            class="slider-end-knob"
            on-down="_knobEndDown"
            on-up="_resetKnob"
@@ -642,9 +642,9 @@ Custom property | Description | Default
 
         this._positionKnob(this._calcRatio(value));
       },
-      _rangeHidden:function(start,end)
+      _rangeHidden:function(start,end,imStart,imEnd)
       {
-        var hidden = (this.startValue==undefined || this.endValue==undefined) || (this.startValue<0 || this.endValue<0) || (this.startValue==0 && this.endValue==0)
+        var hidden = (isNaN(this.startValue) || isNaN(this.endValue)) || (this.startValue==undefined || this.endValue==undefined) || (this.startValue<0 || this.endValue<0) || (this.startValue==0 && this.endValue==0)
         return hidden;
       },
       _valueChanged: function() {
@@ -756,14 +756,14 @@ Custom property | Description | Default
         }
       },
       _positionEndKnob: function(value) {
-        var ratio = this._calcRatio(value+this.startValue);
+        var ratio = this._calcRatio(value/1+this.startValue);
         var immediateEndValue = this._calcStep(this._calcKnobPosition(ratio));
         if(this.startValue!==undefined && immediateEndValue-this.startValue<this.minRange)
         {
           this.endValue = this.minRange;
           return;
         }
-        this._setImmediateEndValue(immediateEndValue-this.startValue);
+        this._setImmediateEndValue(Math.round((immediateEndValue-this.startValue)*100)/100);
         this._setEndRatio(this._calcRatio(this.immediateEndValue+this.startValue));
         this.$.endKnob.style.left = (this.endRatio * 100) + '%';
         this.$.rangeContainer.style.right = (100-(this.endRatio * 100)) + '%';
@@ -858,7 +858,7 @@ Custom property | Description | Default
             var immediateEndValue = this._calcStep(this._calcKnobPosition(this._x / this._w));
             if(immediateEndValue-this.startValue<this.minRange)
               return;
-            this._setImmediateEndValue(immediateEndValue-this.startValue);
+            this._setImmediateEndValue(Math.round((immediateEndValue-this.startValue)*100)/100);
             // update knob's position
             var translateX = ((this._calcRatio(this.immediateEndValue+this.startValue) * this._w) - this._knobstartx);
             this.translate3d(translateX + 'px', 0, 0, this.$.endKnob);
