@@ -595,7 +595,7 @@ Custom property | Description | Default
       observers: [
         '_updateKnob(value, min, max, snaps, step)',
         '_positionStartKnob(startValue)',
-        '_positionEndKnob(endValue)',
+        '_positionEndKnob(endValue,startValue)',
         '_valueChanged(value)',
         '_startValueChanged(startValue)',
         '_endValueChanged(endValue)',
@@ -728,7 +728,7 @@ Custom property | Description | Default
         var ratio = this._calcRatio(value);
 
         var immediateStartValue = this._calcStep(this._calcKnobPosition(ratio));
-        if(this.endValue!==undefined && immediateStartValue>=0 && this.endValue-immediateStartValue<this.minRange)
+        if(this.endValue!==undefined && immediateStartValue>=0 && this.immediateEndValue<this.minRange)
         {
           this.startValue = this.endValue - this.minRange;
           return;
@@ -745,15 +745,15 @@ Custom property | Description | Default
         }
       },
       _positionEndKnob: function(value) {
-        var ratio = this._calcRatio(value);
+        var ratio = this._calcRatio(value+this.startValue);
         var immediateEndValue = this._calcStep(this._calcKnobPosition(ratio));
-        if(this.startValue!==undefined &&immediateEndValue>0 && immediateEndValue-this.startValue<this.minRange)
+        if(this.startValue!==undefined && immediateEndValue-this.startValue<this.minRange)
         {
-          this.endValue = this.startValue+this.minRange;
+          this.endValue = this.minRange;
           return;
         }
-        this._setImmediateEndValue(immediateEndValue);
-        this._setEndRatio(this._calcRatio(this.immediateEndValue));
+        this._setImmediateEndValue(immediateEndValue-this.startValue);
+        this._setEndRatio(this._calcRatio(this.immediateEndValue+this.startValue));
         this.$.endKnob.style.left = (this.endRatio * 100) + '%';
         this.$.rangeContainer.style.right = (100-(this.endRatio * 100)) + '%';
         if (this.dragging) {
@@ -826,7 +826,7 @@ Custom property | Description | Default
         {
           case 'start':
             var immediateStartValue = this._calcStep(this._calcKnobPosition(this._x / this._w));
-            if(this.endValue-immediateStartValue<this.minRange)
+            if(((this.startValue+this.endValue)-immediateStartValue)<this.minRange)
               return;
             this._setImmediateStartValue(immediateStartValue);
 
@@ -840,13 +840,13 @@ Custom property | Description | Default
             var immediateEndValue = this._calcStep(this._calcKnobPosition(this._x / this._w));
             if(immediateEndValue-this.startValue<this.minRange)
               return;
-            this._setImmediateEndValue(immediateEndValue);
-
+            this._setImmediateEndValue(immediateEndValue-this.startValue);
+            console.log(immediateEndValue)
             // update knob's position
-            var translateX = ((this._calcRatio(this.immediateEndValue) * this._w) - this._knobstartx);
+            var translateX = ((this._calcRatio(this.immediateEndValue+this.startValue) * this._w) - this._knobstartx);
             this.translate3d(translateX + 'px', 0, 0, this.$.endKnob);
 
-            this.$.rangeContainer.style.right =this._w - (this._calcRatio(this.immediateEndValue) * this._w)  + 'px';
+            this.$.rangeContainer.style.right =this._w - (this._calcRatio(this.immediateEndValue+this.startValue) * this._w)  + 'px';
 
             break;
           default:
@@ -875,6 +875,7 @@ Custom property | Description | Default
             this.$.startKnob.classList.remove('dragging');
             this._setDragging(false);
             this._resetKnob();
+            this.endValue = this.endValue + this.startValue - this.immediateStartValue
             this.startValue = this.immediateStartValue;
 
             s.transform = s.webkitTransform = '';
