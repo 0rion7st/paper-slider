@@ -640,7 +640,7 @@ Custom property | Description | Default
         this.setAttribute('aria-valuemax', max);
         this.setAttribute('aria-valuenow', value);
 
-        this._positionKnob(this._calcRatio(value));
+        this._positionKnob(this._calcRatio(value/1));
       },
       _rangeHidden:function(start,end,imStart,imEnd)
       {
@@ -736,7 +736,7 @@ Custom property | Description | Default
       },
 
       _positionStartKnob: function(value) {
-        var ratio = this._calcRatio(value);
+        var ratio = this._calcRatio(value/1);
 
         var immediateStartValue = this._calcStep(this._calcKnobPosition(ratio));
         if(this.endValue!==undefined && immediateStartValue>=0 && this.immediateEndValue<this.minRange)
@@ -747,7 +747,7 @@ Custom property | Description | Default
 
 
         this._setImmediateStartValue(immediateStartValue);
-        this._setStartRatio(this._calcRatio(this.immediateStartValue));
+        this._setStartRatio(this._calcRatio(this.immediateStartValue/1));
         this.$.startKnob.style.left = (this.startRatio * 100) + '%';
         this.$.rangeContainer.style.left = (this.startRatio * 100) + '%';
         if (this.dragging) {
@@ -756,7 +756,7 @@ Custom property | Description | Default
         }
       },
       _positionEndKnob: function(value) {
-        var ratio = this._calcRatio(value/1+this.startValue);
+        var ratio = this._calcRatio(value/1+this.startValue/1);
         var immediateEndValue = this._calcStep(this._calcKnobPosition(ratio));
         if(this.startValue!==undefined && immediateEndValue-this.startValue<this.minRange)
         {
@@ -764,7 +764,7 @@ Custom property | Description | Default
           return;
         }
         this._setImmediateEndValue(Math.round((immediateEndValue-this.startValue)*100)/100);
-        this._setEndRatio(this._calcRatio(this.immediateEndValue+this.startValue));
+        this._setEndRatio(this._calcRatio(this.immediateEndValue/1+this.startValue/1));
         this.$.endKnob.style.left = (this.endRatio * 100) + '%';
         this.$.rangeContainer.style.right = (100-(this.endRatio * 100)) + '%';
         if (this.dragging) {
