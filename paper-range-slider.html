@@ -408,7 +408,7 @@ Custom property | Description | Default
            on-down="_knobEndDown"
            on-up="_resetKnob"
            on-track="_onTrack">
-        <div class="range-knob-inner" value$="[[immediateEndValue]]"></div>
+        <div class="range-knob-inner" value$="[[immediateSumValue]]"></div>
       </div>
     </div>
 
@@ -511,6 +511,12 @@ Custom property | Description | Default
           notify: true
         },
 
+        immediateSumValue: {
+          type: Number,
+          value: 0,
+          readOnly: true,
+          notify: true
+        },
         startRatio: {
           type: Number,
           value: 0,
@@ -663,6 +669,8 @@ Custom property | Description | Default
         } else {
           this.startValue = this.immediateStartValue;
         }
+        this._setImmediateSumValue(this.immediateStartValue + this.immediateEndValue)
+        this.fire('immediate-sum-value-change');
       },
       _immediateEndValueChanged: function() {
         if (this.dragging) {
@@ -670,6 +678,8 @@ Custom property | Description | Default
         } else {
           this.endValue = this.immediateEndValue;
         }
+        this._setImmediateSumValue(this.immediateStartValue + this.immediateEndValue)
+        this.fire('immediate-sum-value-change');
       },
       _immediateValueChanged: function() {
         if (this.dragging) {
@@ -859,6 +869,7 @@ Custom property | Description | Default
             if(immediateEndValue-this.startValue<this.minRange)
               return;
             this._setImmediateEndValue(Math.round((immediateEndValue-this.startValue)*100)/100);
+            this._setImmediateSumValue(this.startValue + Math.round((immediateEndValue-this.startValue)*100)/100);
             // update knob's position
             var translateX = ((this._calcRatio(this.immediateEndValue+this.startValue) * this._w) - this._knobstartx);
             this.translate3d(translateX + 'px', 0, 0, this.$.endKnob);
@@ -871,6 +882,8 @@ Custom property | Description | Default
             if((immediateStartValue+this.endValue)>this.max)
               return;
             this._setImmediateStartValue(immediateStartValue);
+
+            this._setImmediateSumValue(immediateStartValue + this.endValue);
             // update knob's position
             var translateX = ((this._calcRatio(this.immediateStartValue) * this._w) - this._knobstartx);
             this.translate3d(translateX + 'px', 0, 0, this.$.startKnob);
