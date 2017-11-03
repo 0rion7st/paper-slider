@@ -669,7 +669,7 @@ Custom property | Description | Default
         } else {
           this.startValue = this.immediateStartValue;
         }
-        this._setImmediateSumValue(this.immediateStartValue + this.immediateEndValue)
+        this._setImmediateSumValue(parseFloat(this.immediateStartValue) + parseFloat(this.immediateEndValue))
         this.fire('immediate-sum-value-change');
       },
       _immediateEndValueChanged: function() {
@@ -678,7 +678,7 @@ Custom property | Description | Default
         } else {
           this.endValue = this.immediateEndValue;
         }
-        this._setImmediateSumValue(this.immediateStartValue + this.immediateEndValue)
+        this._setImmediateSumValue(parseFloat(this.immediateStartValue) + parseFloat(this.immediateEndValue))
         this.fire('immediate-sum-value-change');
       },
       _immediateValueChanged: function() {
@@ -869,7 +869,7 @@ Custom property | Description | Default
             if(immediateEndValue-this.startValue<this.minRange)
               return;
             this._setImmediateEndValue(Math.round((immediateEndValue-this.startValue)*100)/100);
-            this._setImmediateSumValue(this.startValue + Math.round((immediateEndValue-this.startValue)*100)/100);
+            this._setImmediateSumValue(parseFloat(this.startValue) + Math.round((immediateEndValue-this.startValue)*100)/100);
             // update knob's position
             var translateX = ((this._calcRatio(this.immediateEndValue+this.startValue) * this._w) - this._knobstartx);
             this.translate3d(translateX + 'px', 0, 0, this.$.endKnob);
@@ -883,7 +883,7 @@ Custom property | Description | Default
               return;
             this._setImmediateStartValue(immediateStartValue);
 
-            this._setImmediateSumValue(immediateStartValue + this.endValue);
+            this._setImmediateSumValue(immediateStartValue + parseFloat(this.endValue));
             // update knob's position
             var translateX = ((this._calcRatio(this.immediateStartValue) * this._w) - this._knobstartx);
             this.translate3d(translateX + 'px', 0, 0, this.$.startKnob);
