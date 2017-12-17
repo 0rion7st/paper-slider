@@ -917,7 +917,7 @@ Custom property | Description | Default
             var s = this.$.startKnob.style;
             this.$.startKnob.classList.remove('dragging');
             this._resetKnob();
-            this.endValue = this.endValue + this.startValue - this.immediateStartValue
+            this.endValue = parseFloat(this.endValue) + parseFloat(this.startValue) - parseFloat(this.immediateStartValue)
             this.startValue = this.immediateStartValue;
             s.transform = s.webkitTransform = '';
             this.fire('start-value-change');
