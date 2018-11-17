@@ -211,7 +211,7 @@ Custom property | Description | Default
         margin: 7px;
         padding: 5px;
         width: calc(100% - 20px);
-        height: calc(100% - 20px);
+        height: calc(100% - 15px);
         border-radius: 20% 20% 50% 50%;
         -moz-box-sizing: border-box;
         box-sizing: border-box;
@@ -239,13 +239,13 @@ Custom property | Description | Default
       }
       .r-knob
       {
-
-        border-radius:  0 50% 50% 0;
+        border-radius: 0% 0% 50% 50%;
+        margin: 18px 0px 0px 4px;
       }
       .l-knob
       {
-
-        border-radius: 50% 0 0 50%;
+        border-radius: 0% 0% 50% 50%;
+        margin: 18px 10px 10px 16px;
       }
       .expand:not(.pin) > .slider-knob > .slider-knob-inner,
       .estart:not(.pin) > .slider-start-knob > .range-knob-inner,
@@ -406,7 +406,7 @@ Custom property | Description | Default
            on-up="_resetKnob"
            on-track="_onTrack"
            on-transitionend="_knobTransitionEnd">
-        <div class="slider-knob-inner" value$="[[immediateValue]]"></div>
+        <div class="slider-knob-inner" value$="[[immediateValue]]" style="margin-top:-5px;"></div>
       </div>
 
       <div hidden$="[[_rangeHidden(startValue, endValue,immediateStartValue,immediateEndValue)]]" id="startKnob"
